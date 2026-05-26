@@ -1,35 +1,57 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from "react";
-import {
-  Video,
-  Smartphone,
-  Image,
-  ChevronLeft,
-  ChevronRight,
-  Save,
-  Trash2,
-  Plus,
-  ClipboardList,
-  ChevronDown,
-  Sparkles,
-  X,
-  Users,
-  CheckCircle2,
-  Download,
-  Cloud,
-  Loader2,
-  RefreshCw,
-  Calendar,
-  Instagram,
-  Music2,
-  BookText,
-  Layers,
-  BarChart3,
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  Info,
-  Edit,
-} from "lucide-react";
+// 使用內建簡易圖示，避免 CodeSandbox 的 lucide-react 版本不同造成元件 undefined 錯誤
+const makeIcon = (symbol) =>
+  function Icon({ size = 16, color, className = "", style = {}, ...props }) {
+    return (
+      <span
+        className={className}
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: size,
+          height: size,
+          fontSize: Math.max(10, size - 1),
+          lineHeight: 1,
+          color,
+          ...style,
+        }}
+        {...props}
+      >
+        {symbol}
+      </span>
+    );
+  };
+
+const Video = makeIcon("▶");
+const Smartphone = makeIcon("▯");
+const Image = makeIcon("▧");
+const ChevronLeft = makeIcon("‹");
+const ChevronRight = makeIcon("›");
+const Save = makeIcon("✓");
+const Trash2 = makeIcon("×");
+const Plus = makeIcon("+");
+const ClipboardList = makeIcon("☷");
+const ChevronDown = makeIcon("⌄");
+const Sparkles = makeIcon("✦");
+const X = makeIcon("×");
+const Users = makeIcon("◌");
+const CheckCircle2 = makeIcon("✓");
+const Download = makeIcon("⇩");
+const Cloud = makeIcon("☁");
+const Loader2 = makeIcon("○");
+const RefreshCw = makeIcon("↻");
+const Calendar = makeIcon("□");
+const Instagram = makeIcon("◎");
+const Music = makeIcon("♪");
+const BookOpen = makeIcon("▤");
+const Layers = makeIcon("▱");
+const BarChart = makeIcon("▥");
+const TrendingUp = makeIcon("↗");
+const TrendingDown = makeIcon("↘");
+const Minus = makeIcon("−");
+const Info = makeIcon("i");
+const Pencil = makeIcon("✎");
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
 import {
@@ -89,7 +111,7 @@ const SOC_PLATFORMS = [
         label: "Reels 短影片",
         maxLen: 80,
         rules:
-          "建議80字左右，依內容需要調整，2-3句。質感生活切入，有畫面感，像詩一樣有停頓節奏。開頭要有畫面感如「一包茶，一個清晨」。口語但文青，配音旁白感。如果是促銷/新品/送禮類，結尾加 ☞ 主頁有更多；日常/美感/故事類讓文案自然結尾。品牌標籤+8-12個茶葉品種/生活情境相關標籤。注意：title欄位留空，IG不需要標題。",
+          "建議80字左右，依內容需要調整，2-3句。質感生活切入，有畫面感，像詩一樣有停頓節奏。開頭要有畫面感如「一包茶，一個清晨」。口語但文青，配音旁白感。如果是促銷/新品/送禮類，結尾加 ☞ 主頁有更多；日常/美感/故事類讓文案自然結尾。【IG Hashtag 2026規則】Instagram 限制最多5個標籤。固定放：#天下第一好茶 #BESTEA，再加3個精準中型標籤(5萬-50萬貼文量)，依該篇茶葉品種/生活情境選擇。絕對不用百萬級大標籤。注意：title欄位留空，IG不需要標題。",
       },
     ],
   },
@@ -104,7 +126,7 @@ const SOC_PLATFORMS = [
         label: "短影片",
         maxLen: 70,
         rules:
-          "建議70字左右，依內容需要調整，2-4句。不用標點符號，用空格或Emoji斷句。【受眾語調】國際版TikTok，受眾以台灣、東南亞、歐美華人為主，18-34歲Gen Z。語氣輕鬆自然、口語生動，避免純台灣用語如「扯」「超ㄅ」「靠邀」，改用通用口語如「原來如此」「真的沒想到」「值得一試」。台灣品牌特色保留。如果是促銷/新品/送禮類，結尾加 👉🏻 主頁看更多；日常/美感/故事類讓文案自然結尾。品牌標籤+8-12個主題相關標籤。注意：title欄位留空，抖音不需要標題。",
+          "建議70字左右，依內容需要調整，2-4句。不用標點符號，用空格或Emoji斷句。【受眾語調】國際版TikTok，受眾以台灣、東南亞、歐美華人為主，18-34歲Gen Z。語氣輕鬆自然、口語生動，避免純台灣用語如「扯」「超ㄅ」「靠邀」，改用通用口語如「原來如此」「真的沒想到」「值得一試」。台灣品牌特色保留。如果是促銷/新品/送禮類，結尾加 👉🏻 主頁看更多；日常/美感/故事類讓文案自然結尾。【抖音 Hashtag 2026規則】3-5個標籤效果最好。固定放：#天下第一好茶 #BESTEA，再加1-3個精準主題標籤，依影片內容選擇。注意：title欄位留空，抖音不需要標題。",
       },
     ],
   },
@@ -119,14 +141,14 @@ const SOC_PLATFORMS = [
         label: "圖文筆記",
         maxLen: 150,
         rules:
-          "必須生成【標題】和【正文】。標題：20字內，生活化故事感，不用誇張數字，如「把高山茶裝進日常¸喝了一個月的感受.ᐟ」。正文：建議100-150字，依內容深度調整，用¸代替逗號，用.ᐟ代替驚嘆號，用✅📍💡⭐️分段。【受眾語調】小紅書主要是大陸用戶，用繁體中文但語氣兩岸都能接受，閨蜜分享感，避免純台灣用語，用「真的沒想到」「值得嘗試」「超推薦」等通用說法。如果是促銷/新品/送禮類，結尾加 🔍 搜「天下第一好茶」✨；日常/美感/故事/知識類讓文案自然結尾。注意：絕對不能出現「官網」「連結」「下單」「購買」。品牌標籤+主題相關標籤，共10-15個。必須包含簡體標籤：#台湾茶 #台湾高山茶，再依主題加1-2個簡體（如#乌龙茶 #台湾红茶 #养生茶 #茶叶推荐 #送礼推荐 擇一）。其餘用繁體。title欄位填標題，copy欄位填正文。",
+          "必須生成【標題】和【正文】。標題：20字內，生活化故事感，不用誇張數字，如「把高山茶裝進日常¸喝了一個月的感受.ᐟ」。正文：建議100-150字，依內容深度調整，用¸代替逗號，用.ᐟ代替驚嘆號，用✅📍💡⭐️分段。【受眾語調】小紅書主要是大陸用戶，用繁體中文但語氣兩岸都能接受，閨蜜分享感，避免純台灣用語，用「真的沒想到」「值得嘗試」「超推薦」等通用說法。文案一律自然結尾，不加任何引導搜尋或購買的CTA，讓內容說話。注意：絕對不能出現「官網」「連結」「下單」「購買」「有保證」「零農藥」「最好」「第一」「企業贈禮」「檢驗合格」等廣告敏感詞，改用「品質穩定」「農藥殘留低」「值得信賴」「送禮首選」等自然說法。【小紅書 Hashtag規則】8-10個精準標籤。固定放：#天下第一好茶 #BESTEA #台湾茶 #台湾高山茶，再加4-6個繁體主題標籤(依茶葉品種/情境/生活風格選擇)。選中型標籤，不用百萬級熱門標籤。title欄位填標題，copy欄位填正文。",
       },
       {
         id: "video",
         label: "影片筆記",
         maxLen: 80,
         rules:
-          "必須生成【標題】和【正文】。標題：20字內，生活畫面感，如「清晨第一杯¸用高山茶包開始.ᐟ」。正文：建議60-80字，依內容需要調整，2-3句，搭配 ✨🍵💕 等小紅書風符號，用¸代替逗號，用.ᐟ代替驚嘆號，生活日常感。如果是促銷/新品/送禮類內容，結尾加 🔍 搜「天下第一好茶」✨；如果是日常/美感/故事/沖泡/知識類，讓文案自然結尾不強加CTA。注意：絕對不能出現「官網」「連結」「下單」「購買」等字眼，會被限流。品牌標籤+主題相關標籤，共8-12個。必須包含簡體標籤：#台湾茶 #台湾高山茶，再依主題加1個簡體（如#乌龙茶 #养生茶 #茶叶好物 擇一）。其餘用繁體。title欄位填標題，copy欄位填正文。",
+          "必須生成【標題】和【正文】。標題：20字內，生活畫面感，如「清晨第一杯¸用高山茶包開始.ᐟ」。正文：建議60-80字，依內容需要調整，2-3句，搭配 ✨🍵💕 等小紅書風符號，用¸代替逗號，用.ᐟ代替驚嘆號，生活日常感。文案一律自然結尾，不加任何引導搜尋或購買的CTA，讓內容說話。注意：絕對不能出現「官網」「連結」「下單」「購買」等字眼，會被限流。【小紅書 Hashtag規則】6-8個精準標籤。固定放：#天下第一好茶 #BESTEA #台湾茶 #台湾高山茶，再加2-4個繁體主題標籤(依影片內容選擇)。title欄位填標題，copy欄位填正文。",
       },
     ],
   },
@@ -229,8 +251,8 @@ const VIDEO_STYLES = [
 // ─── Planner Constants ───────────────────────────────────────────────────────
 const PLATFORM_OPTIONS = [
   { value: "IG", label: "Instagram", icon: Instagram, color: "#e1306c" },
-  { value: "TIKTOK", label: "TikTok", icon: Music2, color: "#010101" },
-  { value: "XHS", label: "小紅書", icon: BookText, color: "#fe2c55" },
+  { value: "TIKTOK", label: "TikTok", icon: Music, color: "#010101" },
+  { value: "XHS", label: "小紅書", icon: BookOpen, color: "#fe2c55" },
 ];
 const PLATFORM_LABEL_MAP = { IG: "Instagram", TIKTOK: "TikTok", XHS: "小紅書" };
 const MIN_YEAR = 2026,
@@ -289,7 +311,9 @@ const EMPTY_ENTRY = {
   hasStory: false,
   scheduled: false,
   published: false,
-  copyText: "",
+  igCopy: "",
+  tiktokCopy: "",
+  xhsCopy: "",
   xhsTitle: "",
 };
 function createEntryId() {
@@ -306,7 +330,9 @@ function normalizeEntry(entry = {}) {
     hasStory: !!entry.hasStory,
     scheduled: !!entry.scheduled,
     published: !!entry.published,
-    copyText: entry.copyText || "",
+    igCopy: entry.igCopy || "",
+    tiktokCopy: entry.tiktokCopy || "",
+    xhsCopy: entry.xhsCopy || "",
     xhsTitle: entry.xhsTitle || "",
   };
 }
@@ -1825,7 +1851,9 @@ export default function App() {
   const [editHasStory, setEditHasStory] = useState(false);
   const [editScheduled, setEditScheduled] = useState(false);
   const [editPublished, setEditPublished] = useState(false);
-  const [editCopyText, setEditCopyText] = useState("");
+  const [editIgCopy, setEditIgCopy] = useState("");
+  const [editTiktokCopy, setEditTiktokCopy] = useState("");
+  const [editXhsCopy, setEditXhsCopy] = useState("");
   const [editXhsTitle, setEditXhsTitle] = useState("");
 
   // Growth
@@ -2229,7 +2257,9 @@ export default function App() {
     setEditHasStory(safe.hasStory);
     setEditScheduled(safe.scheduled);
     setEditPublished(safe.published);
-    setEditCopyText(safe.copyText || "");
+    setEditIgCopy(safe.igCopy || "");
+    setEditTiktokCopy(safe.tiktokCopy || "");
+    setEditXhsCopy(safe.xhsCopy || "");
     setEditXhsTitle(safe.xhsTitle || "");
   }, []);
 
@@ -2254,7 +2284,9 @@ export default function App() {
     hasStory: editHasStory,
     scheduled: editScheduled,
     published: editPublished,
-    copyText: editCopyText,
+    igCopy: editIgCopy,
+    tiktokCopy: editTiktokCopy,
+    xhsCopy: editXhsCopy,
     xhsTitle: editXhsTitle,
   });
   const openBlankEntryForDate = useCallback(
@@ -2288,18 +2320,17 @@ export default function App() {
   }, [clearEditing]);
 
   const switchEditingItem = (index) => {
+    const saved = getFormValues();
     setSelectedDateEntries((prev) => {
       const next = [...prev];
-      next[editingIndex] = normalizeEntry({
-        ...prev[editingIndex],
-        ...getFormValues(),
-      });
-      loadEntryToForm(next[index], editDate);
+      next[editingIndex] = normalizeEntry({ ...prev[editingIndex], ...saved });
+      setTimeout(() => loadEntryToForm(next[index], editDate), 0);
       return next;
     });
     setEditingIndex(index);
   };
   const addNewScheduleItem = () => {
+    if (selectedDateEntries.length >= 3) return;
     setSelectedDateEntries((prev) => {
       const next = [...prev];
       next[editingIndex] = normalizeEntry({
@@ -2459,8 +2490,8 @@ export default function App() {
 
   const TAB_OPTIONS = [
     { value: "planner", label: "排程表", icon: Calendar },
-    { value: "social", label: "社群文案", icon: Edit },
-    { value: "growth", label: "粉絲成長", icon: BarChart3 },
+    { value: "social", label: "社群文案", icon: Pencil },
+    { value: "growth", label: "粉絲成長", icon: BarChart },
   ];
 
   return (
@@ -2830,14 +2861,14 @@ export default function App() {
                   <div className="stat-card">
                     <div className="stat-label">TikTok</div>
                     <div className="stat-value">
-                      <Music2 size={15} />
+                      <Music size={15} />
                       {formatNumber(currentGrowthRow.ttTotal)}
                     </div>
                   </div>
                   <div className="stat-card">
                     <div className="stat-label">小紅書</div>
                     <div className="stat-value">
-                      <BookText size={15} color="#fe2c55" />
+                      <BookOpen size={15} color="#fe2c55" />
                       {formatNumber(currentGrowthRow.xhTotal)}
                     </div>
                   </div>
@@ -3177,7 +3208,7 @@ export default function App() {
               <div className="growth-form-shell">
                 <div className="growth-form-body">
                   <div className="section-title">
-                    <BarChart3 size={17} />
+                    <BarChart size={17} />
                     登錄粉絲數
                   </div>
                   <div className="section-subtitle">
@@ -3266,7 +3297,7 @@ export default function App() {
                           gap: 4,
                         }}
                       >
-                        <Music2 size={10} />
+                        <Music size={10} />
                         TikTok 總粉絲數
                       </label>
                       <input
@@ -3286,7 +3317,7 @@ export default function App() {
                           gap: 4,
                         }}
                       >
-                        <BookText size={10} color="#fe2c55" />
+                        <BookOpen size={10} color="#fe2c55" />
                         小紅書 總粉絲數
                       </label>
                       <input
@@ -3333,7 +3364,7 @@ export default function App() {
                         </th>
                         <th>IG 成長</th>
                         <th>
-                          <Music2
+                          <Music
                             size={10}
                             style={{ verticalAlign: "middle", marginRight: 3 }}
                           />
@@ -3341,7 +3372,7 @@ export default function App() {
                         </th>
                         <th>TikTok 成長</th>
                         <th>
-                          <BookText
+                          <BookOpen
                             size={10}
                             style={{ verticalAlign: "middle", marginRight: 3 }}
                           />
@@ -3475,14 +3506,16 @@ export default function App() {
                       </button>
                     );
                   })}
-                  <button
-                    type="button"
-                    className="schedule-tab add"
-                    onClick={addNewScheduleItem}
-                  >
-                    <Plus size={12} />
-                    新增同日排程
-                  </button>
+                  {selectedDateEntries.length < 3 && (
+                    <button
+                      type="button"
+                      className="schedule-tab add"
+                      onClick={addNewScheduleItem}
+                    >
+                      <Plus size={12} />
+                      新增同日排程
+                    </button>
+                  )}
                 </div>
                 <div className="two-cols">
                   <div className="field-group">
@@ -3547,6 +3580,7 @@ export default function App() {
                     placeholder="描述影片內容、拍攝重點、主打賣點…生成文案時可直接帶入"
                   />
                 </div>
+                {/* IG 文案備存 */}
                 <div className="field-group">
                   <label
                     className="field-label"
@@ -3556,31 +3590,31 @@ export default function App() {
                       alignItems: "center",
                     }}
                   >
-                    <span>📋 文案備存</span>
+                    <span>📸 IG 文案備存</span>
                     <div
                       style={{ display: "flex", gap: 6, alignItems: "center" }}
                     >
-                      {editCopyText && (
+                      {editIgCopy && (
                         <span
                           style={{
                             fontSize: 10,
-                            color: "#059669",
+                            color: "#C13584",
                             fontWeight: 700,
                           }}
                         >
                           ✓ 已有文案
                         </span>
                       )}
-                      {editCopyText && (
+                      {editIgCopy && (
                         <button
                           type="button"
-                          onClick={() => {
-                            navigator.clipboard.writeText(editCopyText);
-                          }}
+                          onClick={() =>
+                            navigator.clipboard.writeText(editIgCopy)
+                          }
                           style={{
                             fontSize: 10,
                             padding: "2px 8px",
-                            background: "#059669",
+                            background: "#C13584",
                             color: "#fff",
                             border: "none",
                             borderRadius: 5,
@@ -3596,73 +3630,179 @@ export default function App() {
                   </label>
                   <textarea
                     className="textarea"
-                    value={editCopyText}
-                    onChange={(e) => setEditCopyText(e.target.value)}
-                    placeholder="把生成好的文案貼在這裡保存…"
-                    style={{ minHeight: 80, fontSize: 12 }}
+                    value={editIgCopy}
+                    onChange={(e) => setEditIgCopy(e.target.value)}
+                    placeholder="把 IG 生成好的文案貼在這裡…"
+                    style={{ minHeight: 70, fontSize: 12 }}
                   />
                 </div>
-                {editPlatform === "XHS" && (
-                  <div className="field-group">
-                    <label
-                      className="field-label"
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
+                {/* 抖音 文案備存 */}
+                <div className="field-group">
+                  <label
+                    className="field-label"
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <span>🎵 抖音 文案備存</span>
+                    <div
+                      style={{ display: "flex", gap: 6, alignItems: "center" }}
                     >
-                      <span>📕 小紅書標題備存</span>
-                      <div
-                        style={{
-                          display: "flex",
-                          gap: 6,
-                          alignItems: "center",
-                        }}
-                      >
-                        {editXhsTitle && (
-                          <span
-                            style={{
-                              fontSize: 10,
-                              color: "#FE2C55",
-                              fontWeight: 700,
-                            }}
-                          >
-                            ✓ 已有標題
-                          </span>
-                        )}
-                        {editXhsTitle && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              navigator.clipboard.writeText(editXhsTitle);
-                            }}
-                            style={{
-                              fontSize: 10,
-                              padding: "2px 8px",
-                              background: "#FE2C55",
-                              color: "#fff",
-                              border: "none",
-                              borderRadius: 5,
-                              cursor: "pointer",
-                              fontFamily: "inherit",
-                              fontWeight: 700,
-                            }}
-                          >
-                            複製
-                          </button>
-                        )}
-                      </div>
-                    </label>
-                    <input
-                      className="text-input"
-                      value={editXhsTitle}
-                      onChange={(e) => setEditXhsTitle(e.target.value)}
-                      placeholder="把小紅書生成的標題貼在這裡…"
-                      style={{ fontSize: 12 }}
-                    />
-                  </div>
-                )}
+                      {editTiktokCopy && (
+                        <span
+                          style={{
+                            fontSize: 10,
+                            color: "#111",
+                            fontWeight: 700,
+                          }}
+                        >
+                          ✓ 已有文案
+                        </span>
+                      )}
+                      {editTiktokCopy && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            navigator.clipboard.writeText(editTiktokCopy)
+                          }
+                          style={{
+                            fontSize: 10,
+                            padding: "2px 8px",
+                            background: "#111",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: 5,
+                            cursor: "pointer",
+                            fontFamily: "inherit",
+                            fontWeight: 700,
+                          }}
+                        >
+                          複製
+                        </button>
+                      )}
+                    </div>
+                  </label>
+                  <textarea
+                    className="textarea"
+                    value={editTiktokCopy}
+                    onChange={(e) => setEditTiktokCopy(e.target.value)}
+                    placeholder="把抖音生成好的文案貼在這裡…"
+                    style={{ minHeight: 70, fontSize: 12 }}
+                  />
+                </div>
+                {/* 小紅書 文案備存 + 標題 */}
+                <div className="field-group">
+                  <label
+                    className="field-label"
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <span>📕 小紅書 文案備存</span>
+                    <div
+                      style={{ display: "flex", gap: 6, alignItems: "center" }}
+                    >
+                      {editXhsCopy && (
+                        <span
+                          style={{
+                            fontSize: 10,
+                            color: "#FE2C55",
+                            fontWeight: 700,
+                          }}
+                        >
+                          ✓ 已有文案
+                        </span>
+                      )}
+                      {editXhsCopy && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            navigator.clipboard.writeText(editXhsCopy)
+                          }
+                          style={{
+                            fontSize: 10,
+                            padding: "2px 8px",
+                            background: "#FE2C55",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: 5,
+                            cursor: "pointer",
+                            fontFamily: "inherit",
+                            fontWeight: 700,
+                          }}
+                        >
+                          複製
+                        </button>
+                      )}
+                    </div>
+                  </label>
+                  <textarea
+                    className="textarea"
+                    value={editXhsCopy}
+                    onChange={(e) => setEditXhsCopy(e.target.value)}
+                    placeholder="把小紅書生成好的文案貼在這裡…"
+                    style={{ minHeight: 70, fontSize: 12 }}
+                  />
+                </div>
+                <div className="field-group">
+                  <label
+                    className="field-label"
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <span>📕 小紅書標題備存</span>
+                    <div
+                      style={{ display: "flex", gap: 6, alignItems: "center" }}
+                    >
+                      {editXhsTitle && (
+                        <span
+                          style={{
+                            fontSize: 10,
+                            color: "#FE2C55",
+                            fontWeight: 700,
+                          }}
+                        >
+                          ✓ 已有標題
+                        </span>
+                      )}
+                      {editXhsTitle && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            navigator.clipboard.writeText(editXhsTitle)
+                          }
+                          style={{
+                            fontSize: 10,
+                            padding: "2px 8px",
+                            background: "#FE2C55",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: 5,
+                            cursor: "pointer",
+                            fontFamily: "inherit",
+                            fontWeight: 700,
+                          }}
+                        >
+                          複製
+                        </button>
+                      )}
+                    </div>
+                  </label>
+                  <input
+                    className="text-input"
+                    value={editXhsTitle}
+                    onChange={(e) => setEditXhsTitle(e.target.value)}
+                    placeholder="把小紅書生成的標題貼在這裡…"
+                    style={{ fontSize: 12 }}
+                  />
+                </div>
                 <div className="field-group">
                   <label className="field-label">貼文類型（可複選）</label>
                   <div className="post-type-group">
