@@ -48,7 +48,7 @@ const SOC_PLATFORMS = [
   {
     id: "instagram", label: "Instagram", icon: "📸", accent: "#C13584",
     formats: [
-      { id: "reels", label: "Reels 短影片", maxLen: 80, rules: "建議60-80字，依內容調整，2-3句。每句話都要有畫面感，像詩一樣有停頓，讓人想反覆看。三個版本的情緒基調要不同：A溫柔、B清醒、C療癒。不要用「值得」「推薦」「必買」等商業詞，讓文字本身說話。如果是促銷/新品/送禮類，結尾加 ☞ 主頁有更多；日常/美感/故事類讓文案自然結尾。【IG Hashtag 2026規則】Instagram 限制最多5個標籤。固定放：#天下第一好茶 #BESTEA，再加3個精準中型標籤(5萬-50萬貼文量)，依該篇茶葉品種/生活情境選擇。絕對不用百萬級大標籤。注意：title欄位留空，IG不需要標題。" },
+      { id: "reels", label: "Reels 短影片", maxLen: 80, rules: "建議60-80字（不含固定聯絡資訊區塊），2-3句。每句畫面感，✦ 起手 Hook。三版本情緒不同：A溫柔、B清醒、C療癒。禁用「值得」「推薦」「必買」。結尾固定接「—— BESTEA ——」分隔線 + 完整聯絡資訊區塊四行（線上訂購 ▸ https://www.besttea1.com / 訂購專線 ▸ 05-5347859 / LINE官方 ▸ https://lin.ee/IKZCmex / ☞ 企業贈禮、大量訂購歡迎私訊），原樣輸出不要省略。【IG Hashtag 2026規則】最多5個，固定 #天下第一好茶 #BESTEA，再加3個精準中型標籤(5萬-50萬貼文量)，依茶葉品種/生活情境選擇。絕對不用百萬級大標籤。title欄位留空。" },
     ],
   },
   {
@@ -147,7 +147,7 @@ const VIDEO_STYLES = [
     desc: "新茶、新系列、首發介紹",
     prompt: `【新品上市風格】各平台語氣：
 - IG Reels：新品的期待感和驚喜感，「等了很久的那款 終於來了」，質感預告，讓人想馬上試
-- 抖音短影片：開箱第一印象，「第一次喝到這個 真的沒想到」，真實反應有說服力
+- 抖音短影片:開箱第一印象，「第一次喝到這個 真的沒想到」，真實反應有說服力
 - 小紅書：詳細新品評測，外觀/香氣/口感/回甘都說，讓人參考決定要不要買`
   },
   {
@@ -264,7 +264,20 @@ A/B/C三個版本必須有明顯不同，不能只是換幾個詞：
 - 抖音：生活口語，例：「喝了這杯 整個下午都不一樣了」「這茶讓我戒掉手搖飲」「每天早上必備 就這款」
 - 小紅書：生活故事感，例：「把高山茶裝進下午茶時光¸真的回不去了.ᐟ」「發現這款茶之後¸喝茶變成一種儀式.ᐟ」
 
-${platformId === "instagram" ? `【IG 專屬規範】文青質感風，禁用「開賣」，改用「珍藏」「品味」等。Emoji 限用：🤍🫧☁️🍃✨🤎☕🌿🕊。符號：✦ ⟡ ˚ ⋆ ₊˚ ┊ ↳ ⌇ ─── 。全繁體中文。` : ""}
+${platformId === "instagram" ? `【IG Reels 專屬規範 2026-05 升級版】
+文青質感風，禁用「開賣」改用「珍藏/品味/感受」。Emoji 限用：🤍🫧☁️🍃✨🤎☕🌿🕊。符號：✦ ⟡ ˚ ⋆ ₊˚ ┊ ↳ ⌇ ─── 。全繁體中文。
+
+【Reels 結構】
+① Hook（10字內，✦ 起手）：反問/感嘆/反差句，例「✦ 你喝過會自帶奶香的茶嗎？」
+② 茶款重點（2-3行）：核心賣點如奶香/回甘/產地
+③ 分隔線：—— BESTEA ——
+④ 聯絡資訊區塊（固定不變，原樣輸出四行）：
+線上訂購 ▸ https://www.besttea1.com
+訂購專線 ▸ 05-5347859
+LINE官方 ▸ https://lin.ee/IKZCmex
+☞ 企業贈禮、大量訂購歡迎私訊
+
+【重要】聯絡資訊區塊四行不可省略、不可改寫、不可縮短。maxLen 80 字限制僅計算 Hook + 茶款重點，不含分隔線與聯絡資訊區塊。` : ""}
 ${platformId === "tiktok" ? `【抖音 TikTok 專屬規範】超口語碎碎念接地氣。產品簡稱（梨山白茶→白茶，大禹嶺90K→90K，阿里山金萱→金萱）。短影片不用標點，用空格或Emoji斷句。全繁體中文。` : ""}
 ${platformId === "xiaohongshu" ? `【小紅書專屬規範（非常重要）】必須全程使用繁體中文，絕對不可以出現任何簡體字。用¸代替所有逗號，用.ᐟ代替所有驚嘆號。Hashtag固定順序：#天下第一好茶 → #BESTEA → #besteatw → 主題相關標籤，全部用繁體中文。` : ""}
 
@@ -328,7 +341,6 @@ function FormatTab({ formats, activeIdx, onSelect, accent }) {
 function CopyBlock({ item }) {
   const [copied, setCopied] = useState(false);
   const [copiedTitle, setCopiedTitle] = useState(false);
-  const titleText = item.title ? `${item.title}\n\n` : "";
   const full = item.copy + (item.hashtags?.length ? "\n\n" + item.hashtags.map(h => h.startsWith("#") ? h : `#${h}`).join(" ") : "");
   const copy = () => { navigator.clipboard.writeText(full); setCopied(true); setTimeout(() => setCopied(false), 2000); };
   const copyTitle = () => { navigator.clipboard.writeText(item.title); setCopiedTitle(true); setTimeout(() => setCopiedTitle(false), 2000); };
@@ -413,7 +425,7 @@ function SocialTab({ prefillBriefing = "", onClearPrefill }) {
   const [results, setResults] = useState({});
   const [loadingMap, setLoadingMap] = useState({});
   const [error, setError] = useState("");
-  const [images, setImages] = useState([]); // [{base64, type, preview, name}]
+  const [images, setImages] = useState([]);
   const fileRef = useRef(null);
   const resultsRef = useRef(null);
   const [history, setHistory] = useState(() => {
@@ -421,7 +433,6 @@ function SocialTab({ prefillBriefing = "", onClearPrefill }) {
   });
   const [showHistory, setShowHistory] = useState(false);
 
-  // prefill from planner
   useEffect(() => {
     if (prefillBriefing) {
       setBriefing(prefillBriefing);
@@ -498,7 +509,7 @@ function SocialTab({ prefillBriefing = "", onClearPrefill }) {
       if (selected.indexOf(pid) < selected.length - 1) await new Promise(r => setTimeout(r, 800));
     }
     setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth" }), 200);
-  }, [selected, briefing, extraNotes, images, apiKey]);
+  }, [selected, briefing, extraNotes, images, apiKey, selectedStyle]);
 
   const isLoading = Object.values(loadingMap).some(Boolean);
   const font = `'Noto Sans TC','SF Pro Display',-apple-system,sans-serif`;
@@ -506,7 +517,6 @@ function SocialTab({ prefillBriefing = "", onClearPrefill }) {
 
   return (
     <div style={{ maxWidth: 640, margin: "0 auto", padding: "24px 16px 60px", fontFamily: font }}>
-      {/* API Key */}
       {showKey && (
         <div style={{ background: "#fffbeb", border: "1px solid #fcd34d", borderRadius: 12, padding: "12px 16px", marginBottom: 20 }}>
           <div style={{ fontSize: 12, fontWeight: 700, color: "#92400e", marginBottom: 8 }}>🔑 請輸入 Anthropic API Key</div>
@@ -552,7 +562,6 @@ function SocialTab({ prefillBriefing = "", onClearPrefill }) {
         </div>
       )}
 
-      {/* Briefing */}
       <div style={{ marginBottom: 20 }}>
         <label style={{ fontSize: 11, fontWeight: 700, color: "#AAA", letterSpacing: 1, display: "block", marginBottom: 8 }}>📝 活動 / 素材內容描述</label>
         <textarea value={briefing} onChange={e => setBriefing(e.target.value)}
@@ -560,7 +569,6 @@ function SocialTab({ prefillBriefing = "", onClearPrefill }) {
           style={{ ...inputBase, minHeight: 130, resize: "vertical", lineHeight: 1.8 }} />
       </div>
 
-      {/* Image Upload */}
       <div style={{ marginBottom: 20 }}>
         <label style={{ fontSize: 11, fontWeight: 700, color: "#AAA", letterSpacing: 1, display: "block", marginBottom: 8 }}>📷 上傳圖片 / 影片（選填）— AI 會看圖寫文案</label>
         <div onDrop={e => { e.preventDefault(); addFiles(e.dataTransfer?.files); }} onDragOver={e => e.preventDefault()}
@@ -591,7 +599,6 @@ function SocialTab({ prefillBriefing = "", onClearPrefill }) {
         <input ref={fileRef} type="file" accept="image/*,video/*" multiple style={{ display: "none" }} onChange={e => addFiles(e.target.files)} />
       </div>
 
-      {/* Platforms */}
       <div style={{ marginBottom: 20 }}>
         <label style={{ fontSize: 11, fontWeight: 700, color: "#AAA", letterSpacing: 1, display: "block", marginBottom: 8 }}>平台（可多選）</label>
         <div style={{ display: "flex", gap: 8 }}>
@@ -608,7 +615,6 @@ function SocialTab({ prefillBriefing = "", onClearPrefill }) {
         </div>
       </div>
 
-      {/* Video Style */}
       <div style={{ marginBottom: 20 }}>
         <label style={{ fontSize: 11, fontWeight: 700, color: "#AAA", letterSpacing: 1, display: "block", marginBottom: 8 }}>
           🎬 影片風格（選填）
@@ -631,7 +637,6 @@ function SocialTab({ prefillBriefing = "", onClearPrefill }) {
         )}
       </div>
 
-      {/* Extra Notes */}
       <div style={{ marginBottom: 20 }}>
         <label style={{ fontSize: 11, fontWeight: 700, color: "#AAA", letterSpacing: 1, display: "block", marginBottom: 8 }}>額外備註（選填）</label>
         <textarea value={extraNotes} onChange={e => setExtraNotes(e.target.value)} placeholder="折扣碼、活動期間、特殊要求..." style={{ ...inputBase, minHeight: 52, resize: "vertical", lineHeight: 1.7 }} />
@@ -664,17 +669,14 @@ function GrowthCell({ val }) {
 
 // ─── Main App ─────────────────────────────────────────────────────────────────
 export default function App() {
-  const [mainTab, setMainTab] = useState("planner"); // "planner" | "growth" | "social"
+  const [mainTab, setMainTab] = useState("planner");
   const [currentYear, setCurrentYear] = useState(() => new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(() => new Date().getMonth());
   const [calendarData, setCalendarData] = useState(() => loadLocalBundle().calendarData);
   const [growthData, setGrowthData] = useState(() => loadLocalBundle().growthData);
 
-  // Social prefill
   const [socialPrefill, setSocialPrefill] = useState("");
-  const [copySaved, setCopySaved] = useState({});  // {entryId: "saved copy text"}
 
-  // Modal
   const [selectedDate, setSelectedDate] = useState(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [editingIndex, setEditingIndex] = useState(0);
@@ -694,14 +696,12 @@ export default function App() {
   const [editXhsCopy, setEditXhsCopy] = useState("");
   const [editXhsTitle, setEditXhsTitle] = useState("");
 
-  // Growth
   const [growthMonth, setGrowthMonth] = useState("");
   const [growthIG, setGrowthIG] = useState("");
   const [growthTT, setGrowthTT] = useState("");
   const [growthXH, setGrowthXH] = useState("");
   const [growthNotes, setGrowthNotes] = useState("");
 
-  // Cloud
   const [authReady, setAuthReady] = useState(false);
   const [isCloudReady, setIsCloudReady] = useState(false);
   const [syncStatus, setSyncStatus] = useState("本機模式");
@@ -725,7 +725,6 @@ export default function App() {
 
   useEffect(() => { saveLocalBundle({ calendarData, growthData }); }, [calendarData, growthData]);
 
-  // 自動將今天以前的「已排程」改為「已發布」
   useEffect(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -1174,12 +1173,10 @@ export default function App() {
             ))}
           </div>
 
-          {/* ── Social Tab ── */}
           <div style={{ display: mainTab === "social" ? "block" : "none" }}>
             <SocialTab prefillBriefing={socialPrefill} onClearPrefill={() => setSocialPrefill("")} />
           </div>
 
-          {/* ── Planner Tab ── */}
           {mainTab === "planner" && (
             <div className={`content-layout ${sidebarCollapsed ? "expanded" : ""}`}>
               <div>
@@ -1261,7 +1258,6 @@ export default function App() {
             </div>
           )}
 
-          {/* ── Growth Tab ── */}
           {mainTab === "growth" && (
             <div className="growth-layout">
               <div className="growth-form-shell">
@@ -1320,7 +1316,6 @@ export default function App() {
           )}
         </div>
 
-        {/* ── Modal ── */}
         {selectedDate && (
           <div className="overlay">
             <div className="modal">
@@ -1347,7 +1342,6 @@ export default function App() {
                   <label className="field-label">內容大綱 / 文案提示</label>
                   <textarea className="textarea" value={editNotes} onChange={e => setEditNotes(e.target.value)} placeholder="描述影片內容、拍攝重點、主打賣點…生成文案時可直接帶入" />
                 </div>
-                {/* IG 文案備存 */}
                 <div className="field-group">
                   <label className="field-label" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <span>📸 IG 文案備存</span>
@@ -1358,7 +1352,6 @@ export default function App() {
                   </label>
                   <textarea className="textarea" value={editIgCopy} onChange={e => setEditIgCopy(e.target.value)} placeholder="把 IG 生成好的文案貼在這裡…" style={{ minHeight: 70, fontSize: 12 }} />
                 </div>
-                {/* 抖音 文案備存 */}
                 <div className="field-group">
                   <label className="field-label" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <span>🎵 抖音 文案備存</span>
@@ -1369,7 +1362,6 @@ export default function App() {
                   </label>
                   <textarea className="textarea" value={editTiktokCopy} onChange={e => setEditTiktokCopy(e.target.value)} placeholder="把抖音生成好的文案貼在這裡…" style={{ minHeight: 70, fontSize: 12 }} />
                 </div>
-                {/* 小紅書 文案備存 + 標題 */}
                 <div className="field-group">
                   <label className="field-label" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <span>📕 小紅書 文案備存</span>
