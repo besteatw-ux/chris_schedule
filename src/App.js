@@ -1,3 +1,4 @@
+// 🔖 VERSION: 2026-05-29-v3-IG-LONG-FORM
 import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import {
   Video, Smartphone, Image, ChevronLeft, ChevronRight, Save, Trash2,
