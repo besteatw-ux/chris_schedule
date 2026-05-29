@@ -243,6 +243,9 @@ async function callSocialAPI(messages, apiKey, retries = 2) {
 async function genPlatform({ platformId, briefing, extraNotes, images = [], apiKey, stylePrompt = "" }) {
   const plat = SOC_PLATFORMS.find(p => p.id === platformId);
   const fmtDesc = plat.formats.map(f => `【${f.label}】字數上限${f.maxLen}字\n規則：${f.rules}`).join("\n\n");
+
+  const IG_SIGNATURE = "\n\n—— BESTEA ——\n\n線上訂購 ▸ https://www.besttea1.com\n訂購專線 ▸ 05-5347859\nLINE官方 ▸ https://lin.ee/IKZCmex\n☞ 企業贈禮、大量訂購歡迎私訊";
+
   const textPrompt = `你是天下第一好茶 BESTEA 的品牌社群小編，負責 ${plat.label} 平台。用戶會給你素材描述，你要改寫成符合品牌調性和平台風格的文案。
 
 【字數硬性規定（超過就是失敗）】
@@ -252,66 +255,46 @@ async function genPlatform({ platformId, briefing, extraNotes, images = [], apiK
 - 以上都不含 Hashtag
 
 【版本差異化（非常重要）】
-A/B/C三個版本必須有明顯不同，不能只是換幾個詞：
-- 版本A：情境畫面感切入，讓人有身歷其境的感覺
-- 版本B：產品特色切入，說清楚這款茶為什麼值得喝
-- 版本C：生活情感切入，跟日常生活產生連結
+A/B/C三個版本必須有明顯不同：
+- 版本A：情境畫面感切入
+- 版本B：產品特色切入
+- 版本C：生活情感切入
 
 【開頭 Hook（前10個字決定生死）】
-禁止用「無論是...」「在這個...」「隨著...」「值得一試」等平淡開頭。
-每個版本開頭必須完全不同，禁止三個版本用同樣的開頭句型。
-- Instagram：有畫面感的短句，例：「煮水聲剛停。茶香就來了。」「一個清晨，一杯梨山。」
-- 抖音：生活口語，例：「喝了這杯 整個下午都不一樣了」「這茶讓我戒掉手搖飲」「每天早上必備 就這款」
-- 小紅書：生活故事感，例：「把高山茶裝進下午茶時光¸真的回不去了.ᐟ」「發現這款茶之後¸喝茶變成一種儀式.ᐟ」
+禁止用「無論是...」「在這個...」「隨著...」等平淡開頭。
+- Instagram：有畫面感的短句，例：「煮水聲剛停。茶香就來了。」
+- 抖音：生活口語，例：「喝了這杯 整個下午都不一樣了」
+- 小紅書：生活故事感，例：「把高山茶裝進下午茶時光¸真的回不去了.ᐟ」
 
-${platformId === "instagram" ? `【IG Reels 專屬規範 2026-05 升級版】
+${platformId === "instagram" ? `【IG Reels 專屬規範】
 文青質感風，禁用「開賣」改用「珍藏/品味/感受」。Emoji 限用：🤍🫧☁️🍃✨🤎☕🌿🕊。符號：✦ ⟡ ˚ ⋆ ₊˚ ┊ ↳ ⌇ ─── 。全繁體中文。
 
-【🚨 強制規定：copy 欄位必須完整包含五段，缺一不可】
-
-copy 欄位內容 = Hook + 茶款重點 + 分隔線 + 聯絡資訊四行
-
-範例 copy 欄位（必須完全照這個格式產出，最後四行原樣複製不可省略不可改寫）：
-✦ 你喝過會自帶奶香的茶嗎？\\n\\n雲霧裡長大的阿里山金萱\\n不用加奶 自己就有奶香 🍃\\n\\n—— BESTEA ——\\n\\n線上訂購 ▸ https://www.besttea1.com\\n訂購專線 ▸ 05-5347859\\nLINE官方 ▸ https://lin.ee/IKZCmex\\n☞ 企業贈禮、大量訂購歡迎私訊
-
-【五段式結構】
+【Reels 結構（只寫 Hook + 茶款重點兩段，聯絡資訊由程式自動補）】
 ① Hook（10字內，✦ 起手）：反問/感嘆/反差句
-② 茶款重點（2-3行）：核心賣點如奶香/回甘/產地
-③ 分隔線：—— BESTEA ——
-④⑤ 聯絡資訊四行：原樣輸出絕不省略
-   線上訂購 ▸ https://www.besttea1.com
-   訂購專線 ▸ 05-5347859
-   LINE官方 ▸ https://lin.ee/IKZCmex
-   ☞ 企業贈禮、大量訂購歡迎私訊
+② 茶款重點（2-3行）：核心賣點
 
-【極度重要】聯絡資訊四行是品牌固定簽名檔，每一篇 copy 欄位末段都必須完整出現，不可省略、不可改寫、不可縮短、不可只留品牌名。maxLen 80 字限制僅計算 Hook + 茶款重點兩段，不含分隔線與聯絡資訊區塊。如果 copy 欄位末段沒有完整四行聯絡資訊，這次生成就是失敗。` : ""}
+【極重要】copy 欄位只寫上面兩段，不要寫「—— BESTEA ——」分隔線、不要寫官網電話 LINE，程式會自動補上。字數 ≤80。` : ""}
 ${platformId === "tiktok" ? `【抖音 TikTok 專屬規範】超口語碎碎念接地氣。產品簡稱（梨山白茶→白茶，大禹嶺90K→90K，阿里山金萱→金萱）。短影片不用標點，用空格或Emoji斷句。全繁體中文。` : ""}
-${platformId === "xiaohongshu" ? `【小紅書專屬規範（非常重要）】必須全程使用繁體中文，絕對不可以出現任何簡體字。用¸代替所有逗號，用.ᐟ代替所有驚嘆號。Hashtag固定順序：#天下第一好茶 → #BESTEA → #besteatw → 主題相關標籤，全部用繁體中文。` : ""}
+${platformId === "xiaohongshu" ? `【小紅書專屬規範】必須全程使用繁體中文，絕對不可以出現任何簡體字。用¸代替所有逗號，用.ᐟ代替所有驚嘆號。Hashtag固定順序：#天下第一好茶 → #BESTEA → #besteatw → 主題相關標籤。` : ""}
 
 【Hashtag 規則】
 - 放在 hashtags 陣列中，不要寫在 copy 文案裡
 - 品牌標籤必放最前面：#天下第一好茶、#BESTEA、#besteatw
-- 剩餘標籤依該篇內容主題選擇最適合的，選用中型標籤（非百萬級熱門），讓受眾精準
-- IG：共5-8個標籤，選跟該篇茶葉品種/情境/生活風格相關的
-- 抖音：共3-5個標籤，簡短直接，跟影片主題相關
-- 小紅書：共8-12個標籤，涵蓋品牌+茶葉品種+生活情境+目標族群
-- 範例（梨山白茶）：#梨山茶 #白茶 #高山茶 #台灣茶 #品茶生活
-- 範例（禮盒）：#茶葉禮盒 #送禮推薦 #台灣伴手禮 #質感禮物
-- 範例（泡茶教學）：#泡茶教學 #沖泡技巧 #茶道 #品茶
+- IG：共5-8個；抖音：共3-5個；小紅書：共8-12個
 
-${stylePrompt ? `【影片風格指定】\n${stylePrompt}\n請嚴格按照這個風格來寫文案。` : ""}
+${stylePrompt ? `【影片風格指定】\n${stylePrompt}` : ""}
 
 ${BRAND}
 
-${briefing ? `【用戶提供的素材內容/活動描述】\n${briefing}\n\n請緊密根據以上內容改寫，不要偏離主題。` : ""}
-${images.length > 0 ? `【圖片素材】已附上${images.length}張圖片，仔細觀察每張圖中的產品、場景、氛圍，融入文案。` : ""}
+${briefing ? `【用戶提供的素材內容】\n${briefing}` : ""}
+${images.length > 0 ? `【圖片素材】已附上${images.length}張圖片，融入文案。` : ""}
 ${extraNotes ? `【額外備註】${extraNotes}` : ""}
 
 請撰寫以下格式：
 ${fmtDesc}
 
-每個格式請生成3個不同版本（A/B/C），開頭、切角、語氣必須明顯不同。
-只回傳純 JSON，不要加任何說明文字或 markdown 符號，字串內換行用 \\n：
+每個格式請生成3個不同版本（A/B/C）。
+只回傳純 JSON，字串內換行用 \\n：
 {
   "formats": [
     { "format_id": "${plat.formats[0].id}", "format_label": "${plat.formats[0].label}", "versions": [
@@ -326,11 +309,30 @@ ${fmtDesc}
     ]}` : ""}
   ]
 }`;
+
   const content = [];
   (images||[]).forEach(img => { content.push({ type: "image", source: { type: "base64", media_type: img.type, data: img.base64 } }); });
   content.push({ type: "text", text: textPrompt });
-  return await callSocialAPI([{ role: "user", content }], apiKey);
+  const result = await callSocialAPI([{ role: "user", content }], apiKey);
+
+  // 🔒 IG 強制補上聯絡資訊（不依賴 AI）
+  if (platformId === "instagram" && result?.formats) {
+    result.formats.forEach(fmt => {
+      fmt.versions?.forEach(v => {
+        if (v.copy) {
+          let cleaned = v.copy
+            .replace(/\n*——\s*BESTEA\s*——[\s\S]*$/i, "")
+            .replace(/\n*線上訂購[\s\S]*$/i, "")
+            .trim();
+          v.copy = cleaned + IG_SIGNATURE;
+        }
+      });
+    });
+  }
+
+  return result;
 }
+
 
 // ─── Social Components ────────────────────────────────────────────────────────
 function FormatTab({ formats, activeIdx, onSelect, accent }) {
